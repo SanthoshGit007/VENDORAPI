@@ -50,6 +50,8 @@ def row_to_dict(row, cols):
 # -----------------------------
 @app.route("/vendors", methods=["GET"])
 def get_vendors():
+    conn = None
+    cursor = None
     try:
         conn = get_conn()
         cursor = conn.cursor()
@@ -60,8 +62,9 @@ def get_vendors():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
     finally:
-        cursor.close()
-        conn.close()
+        if cursor: cursor.close()
+        if conn: conn.close()
+
 
 @app.route("/vendors/<pan>", methods=["GET"])
 def get_vendor(pan):
