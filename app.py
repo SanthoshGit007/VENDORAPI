@@ -9,23 +9,22 @@ from dotenv import load_dotenv
 # -----------------------------
 # Load environment variables
 # -----------------------------
-load_dotenv()  # Optional: for local development
+load_dotenv()  # For local development only
 
 # -----------------------------
-# Cloud MySQL Config
+# Cloud MySQL Config (Railway)
 # -----------------------------
 DB_CONFIG = {
-    "host": os.environ["DB_HOST"],       # Railway MySQL host
-    "user": os.environ["DB_USER"],       # Railway MySQL user
-    "password": os.environ["DB_PASSWORD"], # Railway MySQL password
-    "database": os.environ["DB_NAME"],   # Railway MySQL database
-    "port": int(os.environ.get("DB_PORT", 3306))
+    "host": os.environ["MYSQLHOST"],          # Railway host
+    "user": os.environ["MYSQLUSER"],          # Railway DB user
+    "password": os.environ["MYSQLPASSWORD"],  # Railway DB password
+    "database": os.environ["MYSQLDATABASE"],  # Railway DB name
+    "port": int(os.environ.get("MYSQLPORT", 3306))
 }
 
 # -----------------------------
 # Upload settings
 # -----------------------------
-# Use Railway persistent storage folder for files
 UPLOAD_DIR = os.environ.get("UPLOAD_DIR", os.path.join(os.getcwd(), "uploads"))
 os.makedirs(UPLOAD_DIR, exist_ok=True)
 ALLOWED_EXT = {"pdf", "png", "jpg", "jpeg"}
@@ -37,10 +36,10 @@ app = Flask(__name__)
 CORS(app)
 
 def allowed_file(filename):
-    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXT
+    return "." in filename and filename.rsplit(".", 1)[1].lower() in ALLOWED_EXT
 
 def get_conn():
-    """Connect to cloud MySQL only"""
+    """Connect to Railway Cloud MySQL"""
     return mysql.connector.connect(**DB_CONFIG)
 
 def row_to_dict(row, cols):
@@ -49,7 +48,6 @@ def row_to_dict(row, cols):
 # -----------------------------
 # ROUTES
 # -----------------------------
-
 @app.route("/vendors", methods=["GET"])
 def get_vendors():
     try:
